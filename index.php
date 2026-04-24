@@ -2,7 +2,7 @@
 session_start();
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
-initDB();
+initDB(); $lang = $_GET['lang'] ?? 'es';
 
 $perPage = 6;
 $page    = max(1, (int)($_GET['page'] ?? 1));
