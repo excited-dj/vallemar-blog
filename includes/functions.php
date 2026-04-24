@@ -1,4 +1,88 @@
-<?php
+function getPosts(int $limit = 10, int $offset = 0, ?int $catId = null, string $search = '', string $lang = 'es'): array {
+    $pdo = getDB();
+    $where = ['p.published = 1'];
+    $params = [];
+
+    $where[] = 'p.lang = :lang';
+    $params[':lang'] = $lang;
+
+    if ($catId) {
+        $where[] = 'p.category_id = :cat';
+        $params[':cat'] = $catId;
+    }
+
+    if ($search) {
+        $where[] = '(p.title LIKE :s OR p.excerpt LIKE :s2)';
+        $params[':s'] = "%$search%";
+        $params[':s2'] = "%$search%";
+    }
+
+    $sql = "SELECT p.*, c.name AS cat_name, c.slug AS cat_slug, c.color AS cat_color
+            FROM posts p
+            LEFT JOIN categories c ON p.category_id = c.id
+            WHERE " . implode(' AND ', $where) . "
+            ORDER BY p.created_at DESC
+            LIMIT :lim OFFSET :off";
+
+    $stmt = $pdo->prepare($sql);
+    foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+    $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+function countPosts(?int $catId = null, string $search = '', string $lang = 'es'): int {
+    $pdo = getDB();
+    $where = ['p.published = 1'];
+    $params = [];
+
+    $where[] = 'p.lang = :lang';
+    $params[':lang'] = $lang;
+
+    if ($catId) {
+        $where[] = 'p.category_id = :cat';
+        $params[':cat'] = $catId;
+    }
+
+    if ($search) {
+        $where[] = '(p.title LIKE :s OR p.excerpt LIKE :s2)';
+        $params[':s'] = "%$search%";
+        $params[':s2'] = "%$search%";
+    }
+
+    $sql = "SELECT COUNT(*)
+            FROM posts p
+            WHERE " . implode(' AND ', $where);
+
+    $stmt = $pdo->prepare($sql);
+    foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+    $stmt->execute();
+    return (int)$stmt->fetchColumn();
+}
+
+function getPost(string $slugOrId, bool $byId = false, string $lang = 'es'): ?array {
+    $pdo = getDB();
+
+    if ($byId) {
+        $stmt = $pdo->prepare("SELECT p.*, c.name AS cat_name, c.slug AS cat_slug, c.color AS cat_color
+                               FROM posts p
+                               LEFT JOIN categories c ON p.category_id = c.id
+                               WHERE p.id = ?
+                               LIMIT 1");
+        $stmt->execute([(int)$slugOrId]);
+    } else {
+        $stmt = $pdo->prepare("SELECT p.*, c.name AS cat_name, c.slug AS cat_slug, c.color AS cat_color
+                               FROM posts p
+                               LEFT JOIN categories c ON p.category_id = c.id
+                               WHERE p.slug = ? AND p.lang = ?
+                               LIMIT 1");
+        $stmt->execute([$slugOrId, $lang]);
+    }
+
+    $r = $stmt->fetch();
+    return $r ?: null;
+}<?php
 function slug(string $str): string {
     $str = mb_strtolower($str);
     $str = strtr($str, ['á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ú'=>'u','ñ'=>'n','ü'=>'u','à'=>'a','è'=>'e','ì'=>'i','ò'=>'o','ù'=>'u']);
