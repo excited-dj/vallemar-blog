@@ -79,7 +79,7 @@ include __DIR__ . '/includes/header.php';
           <?php endif; ?>
           <div class="post-card-body">
             <?php if ($p['cat_name']): ?>
-              <a href="<?= SITE_URL ?>?cat=<?= e($p['cat_slug']) ?>"
+              <a href="<?= SITE_URL ?>?cat=<?= e($p['cat_slug']) ?>&lang=<?= e($lang) ?>"
                  class="post-cat-badge"
                  style="background:<?= e($p['cat_color'] ?? '#1a5276') ?>"><?= e($p['cat_name']) ?></a>
             <?php endif; ?>
