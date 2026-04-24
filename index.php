@@ -19,8 +19,8 @@ if ($catSlug) {
     }
 }
 
-$posts = getPosts($perPage, $offset, $catId, $search);
-$total = countPosts($catId, $search);
+$posts = getPosts($perPage, $offset, $catId, $search, $lang);
+$total = countPosts($catId, $search, $lang);
 $pages = (int)ceil($total / $perPage);
 
 $pageTitle = 'Blog';
