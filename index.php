@@ -36,6 +36,7 @@ include __DIR__ . '/includes/header.php';
   <p>Noticias, actividades y vida escolar de nuestra comunidad educativa</p>
   <form class="hero-search" method="get" action="<?= SITE_URL ?>">
     <input type="text" name="q" placeholder="Buscar artículos…" value="<?= e($search) ?>">
+      <input type="hidden" name="lang" value="<?= e($lang) ?>">
     <button type="submit">Buscar</button>
   </form>
 </div>
@@ -99,7 +100,11 @@ include __DIR__ . '/includes/header.php';
       <?php if ($pages > 1): ?>
       <div class="pagination">
         <?php
-        $base = SITE_URL . '?' . http_build_query(array_filter(['q'=>$search,'cat'=>$catSlug]));
+       $base = SITE_URL . '?' . http_build_query(array_filter([
+  'q' => $search,
+  'cat' => $catSlug,
+  'lang' => $lang
+]));
         if ($page > 1): ?>
           <a href="<?= $base ?>&page=<?= $page - 1 ?>">‹ Anterior</a>
         <?php endif;
