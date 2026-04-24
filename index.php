@@ -83,7 +83,7 @@ include __DIR__ . '/includes/header.php';
                  class="post-cat-badge"
                  style="background:<?= e($p['cat_color'] ?? '#1a5276') ?>"><?= e($p['cat_name']) ?></a>
             <?php endif; ?>
-            <h2><a href="<?= SITE_URL ?>/post.php?slug=<?= e($p['slug']) ?>"><?= e($p['title']) ?></a></h2>
+            <h2><a href="<?= SITE_URL ?>/post.php?slug=<?= e($p['slug']) ?>&lang=<?= e($lang) ?>">
             <p class="post-excerpt"><?= e($p['excerpt'] ?? '') ?></p>
             <div class="post-meta">
               <span class="post-meta-author">✍ <?= e($p['author']) ?></span>
